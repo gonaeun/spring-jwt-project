@@ -1,5 +1,11 @@
 package com.gonaeun.springjwtproject.common.response;
 
-public class ErrorResponse {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
+public class ErrorResponse {
+    private final String code;
+    private final String message;
 }
