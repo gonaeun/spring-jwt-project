@@ -29,7 +29,12 @@ public class JwtProvider { // 토큰 생성 및 검증
     // 토큰 생성
     public String createToken(String username, Set<String> roles) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles", roles);
+
+        Set<String> authorities = roles.stream()
+            .map(r -> "ROLE_" + r)   // USER → ROLE_USER, ADMIN → ROLE_ADMIN
+            .collect(Collectors.toSet());
+
+        claims.put("roles", authorities);
 
         Date now = new Date();
         Date expiry = new Date(now.getTime() + validityInMs);
@@ -50,7 +55,7 @@ public class JwtProvider { // 토큰 생성 및 검증
         List<String> roles = (List<String>) claims.get("roles");
 
         List<GrantedAuthority> authorities = roles.stream()
-            .map(SimpleGrantedAuthority::new)
+            .map(SimpleGrantedAuthority::new) // JWT에 ROLE_ADMIN이 들어있음
             .collect(Collectors.toList());
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "", authorities);
