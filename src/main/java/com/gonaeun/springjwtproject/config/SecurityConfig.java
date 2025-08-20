@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/auth/**",        // 회원가입/로그인
                     "/swagger-ui/**",      // Swagger UI
+                    "/swagger-ui.html",
                     "/v3/api-docs/**"      // OpenAPI JSON
                 ).permitAll()
                 .anyRequest().authenticated() // 나머지는 인증 필요
