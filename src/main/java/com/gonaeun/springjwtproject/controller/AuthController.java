@@ -1,6 +1,8 @@
 package com.gonaeun.springjwtproject.controller;
 
+import com.gonaeun.springjwtproject.dto.request.LoginRequest;
 import com.gonaeun.springjwtproject.dto.request.SignUpRequest;
+import com.gonaeun.springjwtproject.dto.response.LoginResponse;
 import com.gonaeun.springjwtproject.dto.response.UserResponse;
 import com.gonaeun.springjwtproject.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,5 +23,11 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<UserResponse> signUp(@RequestBody @Valid SignUpRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(req));
+    }
+
+    @Operation(summary = "로그인")
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest req) {
+        return ResponseEntity.ok(authService.login(req));
     }
 }

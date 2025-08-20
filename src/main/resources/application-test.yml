@@ -1,0 +1,5 @@
+server:
+  port: 0   # 자동 랜덤 포트
+spring:
+  profiles:
+    active: test
