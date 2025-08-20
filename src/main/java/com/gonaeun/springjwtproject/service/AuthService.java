@@ -2,6 +2,7 @@ package com.gonaeun.springjwtproject.service;
 
 import com.gonaeun.springjwtproject.common.exception.CustomException;
 import com.gonaeun.springjwtproject.common.exception.ErrorCode;
+import com.gonaeun.springjwtproject.common.util.JwtProvider;
 import com.gonaeun.springjwtproject.domain.Role;
 import com.gonaeun.springjwtproject.domain.User;
 import com.gonaeun.springjwtproject.dto.request.LoginRequest;
@@ -10,6 +11,7 @@ import com.gonaeun.springjwtproject.dto.response.LoginResponse;
 import com.gonaeun.springjwtproject.dto.response.RoleResponse;
 import com.gonaeun.springjwtproject.dto.response.UserResponse;
 import com.gonaeun.springjwtproject.repository.UserRepository;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
     public UserResponse signUp(SignUpRequest req) {
         // 중복 사용자 체크
@@ -42,9 +45,10 @@ public class AuthService {
         );
     }
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtProvider = jwtProvider;
     }
 
     public LoginResponse login(LoginRequest req) {
@@ -57,8 +61,12 @@ public class AuthService {
                 ErrorCode.INVALID_CREDENTIALS, "아이디 또는 비밀번호가 올바르지 않습니다.");
         }
 
-        // 흐름 검증용 임시 토큰. jwt로 교체 예정
-        String token = "TEMP_TOKEN_" + user.getId();
+        // JWT 토큰 발급
+        String token = jwtProvider.createToken(
+            user.getUsername(),
+            Set.of(user.getRole().name()) // USER or ADMIN
+        );
+
         return new LoginResponse(token);
     }
 
