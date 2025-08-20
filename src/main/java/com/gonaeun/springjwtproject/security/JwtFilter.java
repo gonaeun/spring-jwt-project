@@ -1,6 +1,9 @@
 package com.gonaeun.springjwtproject.security;
 
+import com.gonaeun.springjwtproject.common.exception.CustomException;
+import com.gonaeun.springjwtproject.common.exception.ErrorCode;
 import com.gonaeun.springjwtproject.common.util.JwtProvider;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,12 +26,21 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         String token = resolveToken(request);
-        if (token != null && jwtProvider.validateToken(token)) {
-            Authentication auth = jwtProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        if (token != null) {
+            try {
+                if (!jwtProvider.validateToken(token)) {
+                    setErrorResponse(response, ErrorCode.INVALID_TOKEN);
+                    return; // 필터 체인 중단
+                }
+                Authentication auth = jwtProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            } catch (JwtException | IllegalArgumentException e) {
+                setErrorResponse(response, ErrorCode.INVALID_TOKEN);
+                return; // 필터 체인 중단
+            }
         }
         filterChain.doFilter(request, response);
     }
@@ -39,5 +51,13 @@ public class JwtFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    private void setErrorResponse(HttpServletResponse response, ErrorCode code) throws IOException {
+        response.setStatus(code.getStatus().value());
+        response.setContentType("application/json; charset=UTF-8");
+        String body = String.format("{\"error\": {\"code\": \"%s\", \"message\": \"%s\"}}",
+            code.name(), code.getDefaultMessage());
+        response.getWriter().write(body);
     }
 }
