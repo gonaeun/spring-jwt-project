@@ -1,4 +1,10 @@
 package com.gonaeun.springjwtproject.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public record LoginResponse(String token) {}
+@Getter
+@AllArgsConstructor
+public class LoginResponse {
+    private String token;
+}
