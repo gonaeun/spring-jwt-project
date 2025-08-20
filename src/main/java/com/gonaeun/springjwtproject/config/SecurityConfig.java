@@ -23,7 +23,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())  // CSRF 비활성화
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/api/auth/**",        // 회원가입/로그인
+                    "/signup",             // 회원가입 허용
+                    "/login",              // 로그인 허용
                     "/swagger-ui/**",      // Swagger UI
                     "/swagger-ui.html",
                     "/v3/api-docs/**"      // OpenAPI JSON
