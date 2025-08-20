@@ -169,7 +169,7 @@ src
   java -jar spring-jwt-project-0.0.1-SNAPSHOT.jar
   ```
 - **기본 서버 주소 및 포트**: 0.0.0.0:8080 (가이드라인 준수)
-- **실행 중인 서비스**: [http://54.252.161.213:8080](http://54.252.161.213:8080/swagger-ui/index.html)
+- **실행 중인 서비스**: [http://54.252.161.213:8080](http://54.252.161.213:8080)
 - **Swagger UI**: [http://54.252.161.213:8080/swagger-ui/index.html](http://54.252.161.213:8080/swagger-ui/index.html)
   
 ⚠️ 실제 API 확인은 Swagger UI를 통해 가능합니다.
